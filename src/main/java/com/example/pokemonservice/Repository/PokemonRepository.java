@@ -12,7 +12,7 @@ public interface PokemonRepository extends JpaRepository<Pokemon, String> {
     @Modifying
     @Transactional
     @Query("UPDATE Pokemon p SET p.pokemonLevel = ?2 WHERE p.pokemonId = ?1")
-    Pokemon increaseLevel(String pokemonId, Integer level);
+    void increaseLevel(String pokemonId, Integer level);
 
     @Modifying
     @Transactional

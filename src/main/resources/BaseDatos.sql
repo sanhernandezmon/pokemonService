@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users
 );
 CREATE TABLE IF NOT EXISTS pokemons
 (
-    pokemon_id varchar(30) NOT NULL,
-    user_id varchar(30) NOT NULL,
+    pokemon_id varchar(50) NOT NULL,
+    user_id varchar(50) NOT NULL,
     pokemon_number numeric NOT NULL,
     pokemon_name varchar(30) NOT NULL,
     given_name varchar(30) NOT NULL,

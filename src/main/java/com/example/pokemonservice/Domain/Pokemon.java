@@ -1,5 +1,6 @@
 package com.example.pokemonservice.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,9 @@ public class Pokemon {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "pokemon_id")
     private String pokemonId;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
     @Column(name ="pokemon_number")
     private long pokemonNumber;

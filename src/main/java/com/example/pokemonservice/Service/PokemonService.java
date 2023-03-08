@@ -22,6 +22,7 @@ public class PokemonService {
 
     public ResponseEntity<?> addPokemon(Pokemon pokemon){
         validateLevel(pokemon);
+
         return ResponseEntity.ok(pokemonRepository.save(pokemon));
     }
 
@@ -32,8 +33,9 @@ public class PokemonService {
                 Pokemon pokemon1 = pokemon.get();
                 if (pokemon1.getUser().getUserId().equals(userid)){
                     pokemon1.setPokemonLevel(pokemon1.getPokemonLevel() + levelIncrement);
-                    validateLevel(pokemon.get());
-                    return ResponseEntity.ok(pokemonRepository.increaseLevel(pokemonId, levelIncrement));
+                    validateLevel(pokemon1);
+                    pokemonRepository.increaseLevel(pokemonId,pokemon1.getPokemonLevel());
+                    return ResponseEntity.ok(pokemon1);
                 }else{
                     return ResponseEntity.badRequest().body("user with id " + userid + "is not authorized to edit pokemon with id " + pokemonId );
                 }
@@ -50,7 +52,11 @@ public class PokemonService {
         if (pokemon.isPresent()) {
             Pokemon pokemon1 = pokemon.get();
             if (pokemon1.getUser().getUserId().equals(userId)){
-                return ResponseEntity.ok(pokemonRepository.deletePokemonByPokemonId(pokemonId));
+                if(pokemonRepository.deletePokemonByPokemonId(pokemonId)==1){
+                    return ResponseEntity.ok(pokemon1.getPokemonId());
+                }else{
+                    return ResponseEntity.badRequest().body("nothing to delete");
+                }
             }else{
                 return ResponseEntity.badRequest().body("user with id " + userId + "is not authorized to edit pokemon with id " + pokemonId );
             }
