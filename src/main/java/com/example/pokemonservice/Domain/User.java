@@ -7,10 +7,11 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Set;
+@Entity
 @Setter
 @Getter
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(generator = "uuid")
@@ -23,4 +24,14 @@ public class User {
     private String email;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     Set<Pokemon> pokemons;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", pokemons=" + pokemons +
+                '}';
+    }
 }

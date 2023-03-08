@@ -12,4 +12,12 @@ import lombok.Setter;
 public class UserRequest {
     private String passwordRequest;
     private String emailRequest;
+
+    @Override
+    public String toString() {
+        return "UserRequest{" +
+                "passwordRequest='" + passwordRequest + '\'' +
+                ", emailRequest='" + emailRequest + '\'' +
+                '}';
+    }
 }

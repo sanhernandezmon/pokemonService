@@ -10,14 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 
-@NoArgsConstructor
 @Service
+@NoArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -27,7 +28,7 @@ public class UserService {
 
     public ResponseEntity<?> registerUser(UserRequest userRequest) {
         if(AlreadyRegistered(userRequest)){
-            return ResponseEntity.badRequest().body("already ecist an user with this email");
+            return ResponseEntity.badRequest().body("already exist an user with this email");
         }
         if(!ValidEmail(userRequest.getEmailRequest())){
             return ResponseEntity.badRequest().body("invalid email");
@@ -36,7 +37,7 @@ public class UserService {
             return ResponseEntity.badRequest().body("invalid password");
         }
         User user = mapUserRequestToUser(userRequest);
-        return ResponseEntity.ok(userRepository.save(user));
+        return ResponseEntity.ok(userRepository.save(user).getUserId());
     }
 
     public String LogUser(UserRequest userRequest){
@@ -49,13 +50,18 @@ public class UserService {
         }
     }
 
+    public User getUserByUserId(String userId){
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElse(null);
+    }
+
     public boolean AlreadyRegistered(UserRequest userRequest){
-        return userRepository.countUsersByUserId(userRequest.getEmailRequest()) != 0;
+        return userRepository.countUsersByEmail(userRequest.getEmailRequest()) != 0;
     }
 
     public boolean ValidEmail(String email){
         Pattern pattern = Pattern
-                .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                .compile("^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@"
                         + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
         return pattern.matcher(email).find();
     }

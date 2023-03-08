@@ -1,13 +1,16 @@
 package com.example.pokemonservice.Domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+@Entity
+@Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "pokemon")
+@Table(name = "pokemons")
 public class Pokemon {
     @Id
     @GeneratedValue(generator = "uuid")

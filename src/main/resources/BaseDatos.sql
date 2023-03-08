@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users
 (
     user_id varchar(50) NOT NULL UNIQUE ,
     email varchar(30) NOT NULL,
-    pass_word varchar(1) NOT NULL,
+    pass_word varchar(100) NOT NULL,
     PRIMARY KEY (user_id)
 );
 CREATE TABLE IF NOT EXISTS pokemons
