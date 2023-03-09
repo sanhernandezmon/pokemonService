@@ -1,20 +1,21 @@
 package com.example.pokemonservice.Controller;
 
+import com.example.pokemonservice.Domain.JwtResponse;
 import com.example.pokemonservice.Domain.UserRequest;
 import com.example.pokemonservice.Security.JwtTokenUtil;
 import com.example.pokemonservice.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/v1/user")
 public class UserController {
 
@@ -35,18 +36,20 @@ public class UserController {
     }
 
     @PostMapping("login")
-    ResponseEntity<String> LogUser(@RequestBody UserRequest userRequest){
-        System.out.println("entrando");
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userRequest.getEmailRequest(), userRequest.getPasswordRequest()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenUtil.generateJwtToken(authentication);
-        if (userService.LogUser(userRequest) != null) {
-            return ResponseEntity.ok(jwt);
-        }
-        else{
-            return ResponseEntity.badRequest().body("cannot log in user, try again");
+    ResponseEntity<JwtResponse> LogUser(@RequestBody UserRequest userRequest) throws Exception {
+        authenticate(userRequest.getEmailRequest(), userRequest.getPasswordRequest());
+        final UserDetails userDetails = userService.loadUserByUsername(userRequest.getEmailRequest());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        JwtResponse jwtResponse = new JwtResponse(token);
+        return ResponseEntity.ok(jwtResponse);
+    }
+    private void authenticate(String username, String password) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
         }
     }
 }

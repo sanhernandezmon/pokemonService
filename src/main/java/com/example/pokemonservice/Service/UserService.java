@@ -10,10 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 
@@ -22,10 +23,13 @@ import java.util.regex.Pattern;
 public class UserService implements UserDetailsService {
 
     UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
 
@@ -39,18 +43,10 @@ public class UserService implements UserDetailsService {
         if(!ValidPassword(userRequest.getPasswordRequest())){
             return ResponseEntity.badRequest().body("invalid password");
         }
+
         User user = mapUserRequestToUser(userRequest);
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         return ResponseEntity.ok(userRepository.save(user).getUserId());
-    }
-
-    public String LogUser(UserRequest userRequest){
-        User user = userRepository.findUserByEmail(userRequest.getEmailRequest());
-        return user.getUserId();
-    }
-
-    public User getUserByUserId(String userId){
-        Optional<User> user = userRepository.findById(userId);
-        return user.orElse(null);
     }
 
     public boolean AlreadyRegistered(UserRequest userRequest){
@@ -75,6 +71,10 @@ public class UserService implements UserDetailsService {
         user.setEmail(userRequest.getEmailRequest());
         user.setPassword(userRequest.getPasswordRequest());
         return user;
+    }
+
+    public User getUserByEmail(String userEmail){
+        return userRepository.findUserByEmail(userEmail);
     }
 
     @Override
