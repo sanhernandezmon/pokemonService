@@ -60,7 +60,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         http.cors().and().csrf().disable().
         authorizeHttpRequests().requestMatchers("/api/v1/user/**").permitAll()
-                .requestMatchers("/api/v1/auth").permitAll()
+                .requestMatchers("/api/v1/cats/**").permitAll()
                 .requestMatchers("/", "/static/**", "/public/**", "/resources/**", "/resources/public/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
