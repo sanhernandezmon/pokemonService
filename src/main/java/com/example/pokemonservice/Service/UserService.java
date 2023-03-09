@@ -7,16 +7,19 @@ import com.example.pokemonservice.Repository.UserRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 
 @Service
 @NoArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     UserRepository userRepository;
 
@@ -42,12 +45,7 @@ public class UserService {
 
     public String LogUser(UserRequest userRequest){
         User user = userRepository.findUserByEmail(userRequest.getEmailRequest());
-        if (getSha256(userRequest.getPasswordRequest())
-                .equals(user.getPassword())){
-            return user.getUserId();
-        }else{
-            return "Unauthorized wrong password";
-        }
+        return user.getUserId();
     }
 
     public User getUserByUserId(String userId){
@@ -75,22 +73,13 @@ public class UserService {
     public User mapUserRequestToUser(UserRequest userRequest){
         User user = new User();
         user.setEmail(userRequest.getEmailRequest());
-        String encoded = getSha256(userRequest.getPasswordRequest());
-        user.setPassword(encoded);
+        user.setPassword(userRequest.getPasswordRequest());
         return user;
     }
-    public String getSha256(String value) {
-        try{
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(value.getBytes());
-            return bytesToHex(md.digest());
-        } catch(Exception ex){
-            throw new RuntimeException(ex);
-        }
-    }
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        return result.toString();
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findUserByEmail(username);
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 }
