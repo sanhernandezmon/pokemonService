@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"passwordRequest\":\"1357Shm1#\",\r\n    \"emailRequest\":\"prueba2@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"passwordRequest\":\"1357Shm1#\",\r\n    \"emailRequest\":\"prueba5@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -47,7 +47,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"passwordRequest\":\"1357SHM1\",\r\n    \"emailRequest\":\"prueba1@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"passwordRequest\":\"1357Shm1#\",\r\n    \"emailRequest\":\"prueba5@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -79,11 +79,57 @@
 				{
 					"name": "createPokemon",
 					"request": {
+						"auth": {
+							"type": "jwt",
+							"jwt": [
+								{
+									"key": "header",
+									"value": "{}",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "algorithm",
+									"value": "HS256",
+									"type": "string"
+								},
+								{
+									"key": "isSecretBase64Encoded",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "payload",
+									"value": "{}",
+									"type": "string"
+								},
+								{
+									"key": "headerPrefix",
+									"value": "Bearer",
+									"type": "string"
+								},
+								{
+									"key": "queryParamKey",
+									"value": "token",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{bearerToken}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pokemonNumber\":94,\r\n    \"pokemonName\":\"gengar\",\r\n    \"givenName\":\"\",\r\n    \"pokemonLevel\":102\r\n}",
+							"raw": "{\r\n    \"pokemonNumber\":94,\r\n    \"pokemonName\":\"gengar\",\r\n    \"givenName\":\"\",\r\n    \"pokemonLevel\":28\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -91,7 +137,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/v1/pokemon?user_id=92838b02-a040-4191-bf00-e9c1e961fc36",
+							"raw": "http://localhost:8080/api/v1/pokemon",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -101,12 +147,6 @@
 								"api",
 								"v1",
 								"pokemon"
-							],
-							"query": [
-								{
-									"key": "user_id",
-									"value": "92838b02-a040-4191-bf00-e9c1e961fc36"
-								}
 							]
 						}
 					},
@@ -116,9 +156,15 @@
 					"name": "increaseLevel",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{bearerToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/pokemon/levelinc/29d71d98-96c0-4160-947c-6fd7632f9757/90?user_id=ffedb659-7b40-44ff-8ab2-aa9928592206",
+							"raw": "http://localhost:8080/api/v1/pokemon/levelinc/4b72918a-29b4-44c9-ba61-21b2109f470e/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -129,26 +175,26 @@
 								"v1",
 								"pokemon",
 								"levelinc",
-								"29d71d98-96c0-4160-947c-6fd7632f9757",
-								"90"
-							],
-							"query": [
-								{
-									"key": "user_id",
-									"value": "ffedb659-7b40-44ff-8ab2-aa9928592206"
-								}
+								"4b72918a-29b4-44c9-ba61-21b2109f470e",
+								"3"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "deletePokemon",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{bearerToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:8080/api/v1/pokemon/delete/29d71d98-96c0-4160-947c-6fd7632f9757?user_id=ffedb659-7b40-44ff-8ab2-aa9928592206",
+							"raw": "http://localhost:8080/api/v1/pokemon/delete/4b72918a-29b4-44c9-ba61-21b2109f470e",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -159,13 +205,35 @@
 								"v1",
 								"pokemon",
 								"delete",
-								"29d71d98-96c0-4160-947c-6fd7632f9757"
+								"4b72918a-29b4-44c9-ba61-21b2109f470e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyPokemons",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{bearerToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/pokemon/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
 							],
-							"query": [
-								{
-									"key": "user_id",
-									"value": "ffedb659-7b40-44ff-8ab2-aa9928592206"
-								}
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"pokemon",
+								"1"
 							]
 						}
 					},
@@ -177,7 +245,7 @@
 			"name": "Cats",
 			"item": [
 				{
-					"name": "New Request",
+					"name": "getCatFacts",
 					"request": {
 						"method": "GET",
 						"header": [],

@@ -1,12 +1,17 @@
 package com.example.pokemonservice.Service;
 
 import com.example.pokemonservice.Domain.Pokemon;
+import com.example.pokemonservice.Domain.User;
+import com.example.pokemonservice.Repository.GetPokemonRepository;
 import com.example.pokemonservice.Repository.PokemonRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,10 +19,12 @@ import java.util.Optional;
 public class PokemonService {
 
     PokemonRepository pokemonRepository;
+    GetPokemonRepository getPokemonRepository;
 
     @Autowired
-    PokemonService(PokemonRepository pokemonRepository) {
+    PokemonService(PokemonRepository pokemonRepository, GetPokemonRepository getPokemonRepository) {
         this.pokemonRepository = pokemonRepository;
+        this.getPokemonRepository = getPokemonRepository;
     }
 
     public ResponseEntity<?> addPokemon(Pokemon pokemon){
@@ -65,13 +72,19 @@ public class PokemonService {
         }
     }
 
-    public void validateLevel(Pokemon pokemon){
+    private void validateLevel(Pokemon pokemon){
         if (pokemon.getPokemonLevel()>100){
             pokemon.setPokemonLevel(100);
         }
         if (pokemon.getPokemonLevel()<0){
             pokemon.setPokemonLevel(1);
         }
+    }
+
+    public List<Pokemon> GetPokemonsByUser(User user, Integer page){
+        Pageable pageable = PageRequest.of(page-1 , 5);
+        return getPokemonRepository.findPokemonsByUser(user, pageable);
+
     }
 
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/v1/pokemon")
@@ -46,4 +48,10 @@ public class PokemonController {
         return pokemonService.deletePokemon(pokemonId, user.getUserId());
     }
 
+    @GetMapping("/{page}")
+    List<Pokemon> getPokemonsByUser(@PathVariable Integer page,@RequestHeader("Authorization") String token ){
+        String useremail = tokenUtil.getUsernameFromToken(token.substring(7));
+        User user = userService.getUserByEmail(useremail);
+        return pokemonService.GetPokemonsByUser(user, page);
+    }
 }
