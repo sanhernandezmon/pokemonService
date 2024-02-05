@@ -1,9 +1,9 @@
 name: Build and Test Java Maven Project
 
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
